@@ -5,8 +5,7 @@ echo "================ Select The Data Base You want to remove ================"
 
 array=(`ls -F | grep / | tr / ' '`)
 
-# echo ${array[@]}
-
+PS3=">>>>>>  Type DB number to Delete "
 select choice in ${array[*]}
 do
 if [ $REPLY -gt ${#array[*]} ]
@@ -16,7 +15,8 @@ then
 else 
     rm -r ${array[${REPLY}-1]}
     echo " ----The selected Data Base is removed sucessfully----"
-    break
+    cd ../Software
+    ./DataBase.sh
 fi
 done
 
