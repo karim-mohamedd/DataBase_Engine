@@ -29,6 +29,7 @@ case $db_name in
     else
         mkdir $db_name
         echo "---------------> The Data Base is Created Sucessfully...."
+        echo "========================================================="
         cd ../Software
         ./DataBase.sh
     fi
