@@ -1,11 +1,10 @@
 #!/usr/bin/bash
-
+PS3=">>>>>> "
 select choice in Create-DB list-DB Connect-DB Drop-DB
 do 
 case $choice in 
 Create-DB )
     . create_DB.sh
-    echo "Data Base is Created Sucessfully...."
     ;;
 
 list-DB )
