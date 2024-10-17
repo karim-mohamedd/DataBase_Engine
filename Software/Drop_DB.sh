@@ -16,6 +16,7 @@ select choice in "${array[@]}"; do
     else 
         rm -r "$choice"
         echo "---- The selected database has been removed successfully ----"
+        echo "============================================================="
         cd ../Software || { echo "Failed to change directory to ../Software"; exit 1; }
         ./DataBase.sh
         break
