@@ -27,7 +27,7 @@ done
 # Main menu for table operations
 while true; do
     echo "================= Table Operations ================="
-    select choice in Create_Table List_Tables Drop_Table Insert_in_Table Select_From_Table Delete_From_Table Update_Table; do 
+    select choice in Create_Table List_Tables Drop_Table Insert_in_Table Delete_From_Table; do 
         case $choice in 
             Create_Table )
                 echo "Creating Table..."
@@ -47,6 +47,11 @@ while true; do
             Delete_From_Table )
                 echo "Deleting From Table..."
                 source ../../Software/delete.sh
+                break
+                ;;
+            Insert_in_Table )
+                echo "inserting to Table..."
+                source ../../Software/insert.sh
                 break
                 ;;
             * )

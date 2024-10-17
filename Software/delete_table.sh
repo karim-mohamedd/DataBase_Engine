@@ -19,6 +19,3 @@ select choice in "${array[@]}"; do
         break
     fi 
 done
-
-echo ">>>>> The Selected Table has been Removed Successfully You are in the main menue"
-echo "================================================================================"
