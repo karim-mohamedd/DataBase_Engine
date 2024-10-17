@@ -32,4 +32,20 @@ select choice in Delete_all Delete_Row; do
                 row=$(awk -F':' -v key="$pk" '$1 == key {print}' "$table_name")
 
                 if [[ -n "$row" ]]; then
-                 
+                    sed -i "/^$(echo "$row" | sed 's/[\/&]/\\&/g')/d" "$table_name"  # Escape special characters
+                    echo "---------- Row deleted successfully --------------"
+                    break
+                else
+                    echo "The primary key does not exist."
+                    continue
+                fi
+            done
+            break
+            ;;
+        
+        *)
+            echo "Please try again."
+            continue
+            ;;
+    esac
+done

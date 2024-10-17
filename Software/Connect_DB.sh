@@ -30,7 +30,7 @@ select choice in Create_Table List_Tables Drop_Table Insert_in_Table Select_From
     case $choice in 
         Create_Table )
             echo "Creating Table"
-            source ../../Software/create_table.sh
+            ../../Software/create_table.sh
             ;;
         List_Tables )
             echo "Listing The Tables"
@@ -40,12 +40,10 @@ select choice in Create_Table List_Tables Drop_Table Insert_in_Table Select_From
             echo "Deleting Table"
             ../../Software/delete_table.sh
             ;;
-
         Delete_From_Table )
             echo "Deleting From Table"
             ../../Software/delete.sh
             ;;
-
         * )
             echo "Invalid input. Please try again."
             continue
