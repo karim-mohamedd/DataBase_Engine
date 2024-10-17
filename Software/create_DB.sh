@@ -1,43 +1,38 @@
 #!/usr/bin/bash
-cd ../DATA
+cd ../DATA || { echo "Failed to change directory to ../DATA"; exit 1; }
 
-while true
-do
+while true; do
+    echo "=================== Enter The Database Name: ====================="
+    read -r db_name
 
-echo "=================== enter The Data Base Name : ====================="
-
-read db_name
-
-case $db_name in 
-'' )
-    echo "-----invalid input, The Data Base name can not be empty-----"
-    continue
-    ;;
-*[[:space:]] | *[[:space:]]* | [[:space:]]* )
-    echo "-----invalid input, The Data Base name can not have spaces-----" 
-    continue
-    ;;
-[0-9]* )
-    echo "-----invalid input, The Data Base name can not start with number-----"
-    continue
-    ;;
-*[a-zA-Z_]*[a-zA-Z_] | *[a-zA-Z_] )
-    if (find $db_name `ls -F | grep /` &> ~/../../dev/null) 
-    then
-        echo "-----This Data Base Already Exists, try another name-----"
-    continue
-    else
-        mkdir $db_name
-        echo "---------------> The Data Base is Created Sucessfully...."
-        echo "========================================================="
-        cd ../Software
-        ./DataBase.sh
-    fi
-    ;; 
-* )
-    echo "-----Not valid Please Try again-----"
-
-esac
+    case $db_name in 
+        '' )
+            echo "----- Invalid input: The database name cannot be empty -----"
+            continue
+            ;;
+        *[[:space:]]* )
+            echo "----- Invalid input: The database name cannot have spaces -----" 
+            continue
+            ;;
+        [0-9]* )
+            echo "----- Invalid input: The database name cannot start with a number -----"
+            continue
+            ;;
+        * )
+            # Check if the database already exists
+            if [[ -d "$db_name" ]]; then
+                echo "----- This database already exists. Try another name -----"
+                continue
+            else
+                mkdir "$db_name"
+                echo "---------------> The database was created successfully...."
+                echo "========================================================="
+                cd ../Software || { echo "Failed to change directory to ../Software"; exit 1; }
+                ./DataBase.sh
+                break  # Exit the loop after successful creation
+            fi
+            ;; 
+    esac
 done
 
-cd - &> ~/../../dev/null
+cd - &> /dev/null
