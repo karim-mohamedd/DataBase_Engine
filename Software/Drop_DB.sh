@@ -1,23 +1,26 @@
 #!/usr/bin/bash
 
-cd ../DATA
-echo "================ Select The Data Base You want to remove ================"
+# Change to the DATA directory
+cd ../DATA || { echo "Failed to change directory to ../DATA"; exit 1; }
 
-array=(`ls -F | grep / | tr / ' '`)
+echo "================ Select The Database You Want to Remove ================"
 
-PS3=">>>>>>  Type DB number to Delete "
-select choice in ${array[*]}
-do
-if [ $REPLY -gt ${#array[*]} ]
-then 
-    echo "============== it is not in the menue ============="
-    continue
-else 
-    rm -r ${array[${REPLY}-1]}
-    echo " ----The selected Data Base is removed sucessfully----"
-    cd ../Software
-    ./DataBase.sh
-fi
+# Store the list of databases in an array
+array=($(ls -F | grep '/$' | tr -d '/'))
+
+PS3=">>>>>> Type the DB number to Delete: "
+select choice in "${array[@]}"; do
+    if [[ -z "$choice" ]]; then
+        echo "============== That is not a valid option ============="
+        continue
+    else 
+        rm -r "$choice"
+        echo "---- The selected database has been removed successfully ----"
+        cd ../Software || { echo "Failed to change directory to ../Software"; exit 1; }
+        ./DataBase.sh
+        break
+    fi
 done
 
-cd - &> ~/../../dev/null
+# Return to the previous directory
+cd - &> /dev/null
