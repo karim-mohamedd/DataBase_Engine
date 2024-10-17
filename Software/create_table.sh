@@ -1,161 +1,136 @@
 #!/bin/bash
 
 echo "----------- Already Existing Tables -----------"
-ls -s 
+ls -s
 
-while true
-do 
-read -p ">>>>>> enter table name to create: "
-table_name=$REPLY
+while true; do 
+    read -p ">>>>>> Enter table name to create: " table_name
 
-case $table_name in 
-' ' )
-    echo "------ The table name can not be empty try again --------"
-    continue
-    ;;
-*[[:space:]] | *[[:space:]]* | [[:space:]]* )
-    echo " ----------- The Table can not contain spaces ---------- "   
-    continue
-    ;; 
-[0-9]* )
-    echo "-------------the table name can not start with numbers----------"
-    continue
-    ;;
-*[a-zA-Z_]*[a-zA-Z_] | *[a-zA-Z_] )
-if (find $table_name `ls -F ` &> ~/../../dev/null) 
-then
-    echo "-----This Table Already Exists, try another name-----"
-    continue
-       
-else
-    touch $table_name 
-    echo "------------ you created the table successfully ------------"
-    break
-fi
-    ;;
-* )
-    echo "Not Valid Please Try again"
-    continue
-    ;;
-esac
+    case $table_name in 
+        '' )
+            echo "------ The table name cannot be empty. Try again --------"
+            continue
+            ;;
+        *[[:space:]]* )
+            echo "----------- The table name cannot contain spaces ----------"   
+            continue
+            ;; 
+        [0-9]* )
+            echo "------------- The table name cannot start with numbers ----------"
+            continue
+            ;;
+        * )
+            if [ -e "$table_name" ]; then
+                echo "----- This table already exists. Try another name -----"
+                continue
+            else
+                touch "$table_name"
+                echo "------------ You created the table successfully ------------"
+                break
+            fi
+            ;;
+    esac
 done
 
-# read the number of fields
-while true 
-do 
+# Read the number of fields
+while true; do 
+    read -p "Enter the number of fields: " table_fields
 
-read -p "Your table fields are : $table_fields"
-
-case $table_fields in 
-*[0] )
-    echo "Invaild imput , The table can not be empty"
-    continue
-    ;;
-*[1-9] | *[1-9]*[0-9] )
-    echo "Your table fields are $table_fields "
-    break 
-    ;;
-* )
-    echo "Invalid input please try again"
-    continue
-    ;;
-esac
-
+    case $table_fields in 
+        '' | *[!0-9]* )
+            echo "Invalid input. Please enter a valid number."
+            continue
+            ;;
+        * )
+            if [ "$table_fields" -lt 1 ]; then
+                echo "Invalid input. The table must have at least one field."
+                continue
+            fi
+            echo "Your table will have $table_fields fields."
+            break 
+            ;;
+    esac
 done
 
-# read the meta data
+# Read the metadata
+echo "------------- Insert Your Meta Data to $table_name -------------"
 
-let table_fields=$table_fields
-echo "Insert Your meta Data to $table_name>>>>"
+row_name=""
+for ((i=1; i<=table_fields; i++)); do
+    while true; do 
+        read -p "Enter your column $i name: " col_name
 
-for((i=2,i<=$table_fields,i++))
-do
-
-while true
-do 
-read -p "enter your column $i name: "
-col_name=$REPLY
-
-case $col_name in 
-' ' )
-    echo "------ The Column name can not be empty try again --------"
-    continue
-    ;;
-*[[:space:]] | *[[:space:]]* | [[:space:]]* )
-    echo " ----------- The Coulmn can not contain spaces ---------- "   
-    continue
-    ;; 
-[0-9]* )
-    echo "-------------the Column can not start with numbers----------"
-    continue
-    ;;
-*[a-zA-Z_]*[a-zA-Z_] | *[a-zA-Z_] )
-if (find $col_name `head-1` $table_name &> ~/../../dev/null) 
-then
-    echo "-----This column Already Exists, try another name-----"
-    continue
-       
-else
-    if [ $i -eq 2]
-    then
-        row_name+="id"$col_name:
-    else
-        row_name+=$col_name:
-    fi
-break
-fi
-    ;;
-* )
-    echo "Not Valid Please Try again"
-    continue
-    ;;
-esac
-done
+        case $col_name in 
+            '' )
+                echo "------ The column name cannot be empty. Try again --------"
+                continue
+                ;;
+            *[[:space:]]* )
+                echo "----------- The column name cannot contain spaces ----------"   
+                continue
+                ;; 
+            [0-9]* )
+                echo "------------- The column name cannot start with numbers ----------"
+                continue
+                ;;
+            * )
+                if grep -q "^$col_name:" "$table_name"; then
+                    echo "----- This column already exists. Try another name -----"
+                    continue
+                else
+                    if [ "$i" -eq 1 ]; then
+                        row_name+="id:$col_name:"
+                    else
+                        row_name+="$col_name:"
+                    fi
+                    break
+                fi
+                ;;
+        esac
+    done
 done
 
-echo $row_name >> $table_name
+echo "$row_name" >> "$table_name"
 
-# the real data
+# Insert the column types
+echo "------------ Insert the columns' types ------------"
 
-echo "insert the column type"
-
-for((i=2;i<=table_fields;i++))
-do
-echo "what is the type of data for $i: "
-select choice in string integer
-do
-case choice in
-string )
-    echo "string"
-    if [ $i -eq 2 ]
-    then
-    row_type+=integer:string:
-    else
-    row_type+=integer:
-    fi
-    break
-    ;;
-integer )
-    echo "integer"
-    if [ $i -eq 2 ]
-    then
-    row_type+=integer:integer:
-    else
-    row_type+=integer:
-    fi
-    break
-    ;;
-* )
-    echo "only 1 and 2 is available. please try again"
-    continue
-    ;;
-esac
+row_type=""
+for ((i=1; i<=table_fields; i++)); do
+    while true; do
+        echo ">>>>>> What is the type of data for column $i?"
+        select choice in string integer; do
+            case $choice in
+                string )
+                    echo "You selected string."
+                    if [ "$i" -eq 1 ]; then
+                        row_type+="string:"
+                    else
+                        row_type+="string:"
+                    fi
+                    break
+                    ;;
+                integer )
+                    echo "You selected integer."
+                    if [ "$i" -eq 1 ]; then
+                        row_type+="integer:"
+                    else
+                        row_type+="integer:"
+                    fi
+                    break
+                    ;;
+                * )
+                    echo "Invalid option. Please try again."
+                    continue
+                    ;;
+            esac
+        done
+        break  # Break the while loop after selecting the type
+    done
 done
-done
 
-echo $row_type >>$table_name
+echo "$row_type" >> "$table_name"
 
-echo "your table meta data is 
-$row_name
-$row_type
-"
+echo "------------ Your table metadata is: -------------"
+echo "Row Names: $row_name"
+echo "Row Types: $row_type"
