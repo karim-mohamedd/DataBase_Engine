@@ -2,8 +2,7 @@
 
 cd ../DATA || { echo "Failed to change directory to ../DATA"; exit 1; }
 
-echo
-PS3=">>>>>> Type your DB number to connect with: "
+
 echo
 echo "================= Select The Data Base ================="
 echo
@@ -26,29 +25,38 @@ select choice in "${array[@]}"; do
 done
 
 # Main menu for table operations
-select choice in Create_Table List_Tables Drop_Table Insert_in_Table Select_From_Table Delete_From_Table Update_Table; do 
-    case $choice in 
-        Create_Table )
-            echo "Creating Table"
-            ../../Software/create_table.sh
-            ;;
-        List_Tables )
-            echo "Listing The Tables"
-            ../../Software/list_tables.sh
-            ;;
-        Drop_Table )
-            echo "Deleting Table"
-            ../../Software/delete_table.sh
-            ;;
-        Delete_From_Table )
-            echo "Deleting From Table"
-            ../../Software/delete.sh
-            ;;
-        * )
-            echo "Invalid input. Please try again."
-            continue
-            ;;
-    esac
+while true; do
+    echo "================= Table Operations ================="
+    select choice in Create_Table List_Tables Drop_Table Insert_in_Table Select_From_Table Delete_From_Table Update_Table; do 
+        case $choice in 
+            Create_Table )
+                echo "Creating Table..."
+                source ../../Software/create_table.sh
+                break
+                ;;
+            List_Tables )
+                echo "Listing The Tables..."
+                source ../../Software/list_tables.sh
+                break
+                ;;
+            Drop_Table )
+                echo "Deleting Table..."
+                source ../../Software/delete_table.sh
+                break
+                ;;
+            Delete_From_Table )
+                echo "Deleting From Table..."
+                source ../../Software/delete.sh
+                break
+                ;;
+            * )
+                echo "Invalid input. Please try again."
+                continue
+                ;;
+        esac
+        # Source the DataBase.sh after each operation, if needed
+        source ../../Software/DataBase.sh
+    done
 done
 
 # Return to the previous directory

@@ -9,3 +9,5 @@ if [ -z "$tables" ]; then
 else
     echo "$tables"
 fi
+echo ">>>> Listing Tables Done, You are in the main menue" 
+echo "==================================================="

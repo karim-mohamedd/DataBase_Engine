@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-PS3=">>>>>>> Type the Table number to Drop: "
+
 
 echo "---------- Select from the menu ---------------"
 
@@ -19,3 +19,6 @@ select choice in "${array[@]}"; do
         break
     fi 
 done
+
+echo ">>>>> The Selected Table has been Removed Successfully You are in the main menue"
+echo "================================================================================"
